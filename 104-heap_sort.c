@@ -56,7 +56,8 @@ void siftDown(int *heap, size_t root, size_t end, size_t size)
 /**
  * heap_sort - implementation of heap sort algorithm on `array`
  * @array: array to sort
- * @size: size of `array`
+ *@size: size of `array`
+
  */
 void heap_sort(int *array, size_t size)
 {
