@@ -1,78 +1,81 @@
 #include "sort.h"
-
-void buildMaxHeap(int *, size_t);
-void siftDown(int *, size_t, size_t, size_t);
-void heap_sort(int *, size_t);
-
+#include <stdio.h>
 /**
- * buildMaxHeap - take unsorted array and convert to complete
- * binary tree with heap property.
- * @array: array to convert
- * @size: size of array
+ * swap_nums - swaps numbers
+ * @arr: input array
+ * @a: first index
+ * @b: second index
+ * Return: no return
  */
-void buildMaxHeap(int *array, size_t size)
+void swap_nums(int *arr, int a, int b)
 {
-	size_t root;
-
-	if (!array || size < 2)
-		return;
-	root = size / 2;
-	do {
-		root--;
-		siftDown(array, root, size, size);
-	} while (root);
+	arr[a] = arr[a] + arr[b];
+	arr[b] = arr[a] - arr[b];
+	arr[a] = arr[a] - arr[b];
 }
 
 /**
- * siftDown - move root at index `root` in `heap` into correct position
- * @heap: heap structure to sift
- * @root: index of root to sift
- * @end: last index to consider
- * @size: size of heap
+ * recursion_heap - recursion that builds the max heap tree
+ * @arr: input array
+ * @i: index number
+ * @size: size of the array
+ * @limit: limit of the array
+ * Return: no return
  */
-void siftDown(int *heap, size_t root, size_t end, size_t size)
+void recursion_heap(int *arr, int i, size_t size, int limit)
 {
-	int tmp;
-	size_t left, right, largest;
+	int bigger;
+	int i2;
 
-	left = 2 * root + 1;
-	right = 2 * root + 2;
-	largest = root;
+	i2 = i * 2;
 
-	if (left < end && heap[left] > heap[largest])
-		largest = left;
-	if (right < end && heap[right] > heap[largest])
-		largest = right;
-	if (largest != root)
+	if (i2 + 2 < limit)
 	{
-		tmp = heap[root];
-		heap[root] = heap[largest];
-		heap[largest] = tmp;
-		print_array(heap, size);
-		siftDown(heap, largest, end, size);
+		recursion_heap(arr, i2 + 1, size, limit);
+		recursion_heap(arr, i2 + 2, size, limit);
+	}
+
+	if (i2 + 1 >= limit)
+		return;
+
+	if (i2 + 2 < limit)
+		bigger = (arr[i2 + 1] > arr[i2 + 2]) ? (i2 + 1) : (i2 + 2);
+	else
+		bigger = i2 + 1;
+
+	if (arr[i] < arr[bigger])
+	{
+		swap_nums(arr, i, bigger);
+		print_array(arr, size);
+		recursion_heap(arr, bigger, size, limit);
 	}
 }
 
 /**
- * heap_sort - implementation of heap sort algorithm on `array`
- * @array: array to sort
- *@size: size of `array`
-
+ * heap_sort - sorts an array of integers in ascending
+ * order using the Heap sort algorithm
+ * @array: input array
+ * @size: size of the array
  */
 void heap_sort(int *array, size_t size)
 {
-	size_t i;
-	int tmp;
+	int i;
+	size_t limit;
 
-	if (array == NULL || size < 2)
+	if (!array || size == 0)
 		return;
-	buildMaxHeap(array, size);
-	for (i = size - 1; i > 0; i--)
+
+	i = 0;
+	limit = size;
+
+	while (limit > 1)
 	{
-		tmp = array[0];
-		array[0] = array[i];
-		array[i] = tmp;
-		print_array(array, size);
-		siftDown(array, 0, i, size);
+		recursion_heap(array, i, size, limit);
+		if (array[i] >= array[limit - 1])
+		{
+			swap_nums(array, i, limit - 1);
+			print_array(array, size);
+		}
+		limit--;
 	}
 }
